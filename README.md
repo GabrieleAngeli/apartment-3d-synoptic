@@ -9,7 +9,7 @@ It renders a neon/wireframe floorplan in a pseudo‑3D view, paired with a **cli
 
 ## Demo
 
-- Open `index.html` in a browser (Chrome/Edge/Firefox).
+- Open `index.html` in a browser (Chrome/Edge/Firefox) [https://gabrieleangeli.github.io/apartment-3d-synoptic/](https://gabrieleangeli.github.io/apartment-3d-synoptic/).
 - Interact with the 3D view and the minimap (selection is synced).
 
 ---
