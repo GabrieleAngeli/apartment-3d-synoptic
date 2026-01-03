@@ -1,0 +1,1820 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sinottico 3D Smart Home (Neon Wireframe) - Planimetria aggiornata</title>
+  <style>
+    :root{
+      --bg0:#060a12;
+      --cyan:#22e6ff;
+      --cyan2:#00b8ff;
+      --mag:#ff3ad7;
+      --text:rgba(255,255,255,.9);
+      --muted:rgba(255,255,255,.65);
+    }
+    *{ box-sizing:border-box; }
+    html,body{
+      height:100%; margin:0;
+      font-family:system-ui,Segoe UI,Roboto,Arial;
+      background:radial-gradient(1200px 800px at 30% 20%, #0b2a45 0%, var(--bg0) 55%, #03060b 100%);
+      color:var(--text);
+    }
+    #app{
+      height:100%;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:16px;
+      padding:16px;
+    }
+    @media (max-width: 980px){
+      #app{ grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    }
+
+    .phone-wrap{ display:flex; align-items:center; justify-content:center; min-height: 360px; }
+    .phone{
+      width: 320px;
+      height: 640px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(9,15,27,.9), rgba(5,9,18,.9));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.06);
+      position:relative;
+      overflow:hidden;
+    }
+    .phone::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius: 28px;
+      background: radial-gradient(900px 400px at 50% 0%, rgba(34,230,255,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .phone-top{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 14px 10px 14px;
+      font-size:12px;
+      color:var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+      color: rgba(255,255,255,.9);
+      letter-spacing:.3px;
+      font-weight:600;
+    }
+    .shield{
+      width:18px; height:18px; border-radius:5px;
+      background: rgba(34,230,255,.14);
+      border:1px solid rgba(34,230,255,.35);
+      box-shadow: 0 0 18px rgba(34,230,255,.25);
+      position:relative;
+    }
+    .shield::after{
+      content:"";
+      position:absolute; inset:4px 5px 6px 5px;
+      border:1px solid rgba(34,230,255,.65);
+      border-top-left-radius:4px; border-top-right-radius:4px;
+      border-bottom-left-radius:8px; border-bottom-right-radius:8px;
+      opacity:.9;
+    }
+    .phone-time{
+      font-variant-numeric: tabular-nums;
+      color: rgba(34,230,255,.9);
+      text-shadow: 0 0 12px rgba(34,230,255,.45);
+      font-weight:700;
+    }
+    .phone-body{
+      padding:12px;
+      height: calc(100% - 54px - 86px);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .chip-row{ display:flex; gap:10px; align-items:center; justify-content:space-between; font-size:12px; color:var(--muted); }
+    .chip{
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      display:flex; gap:8px; align-items:center;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: rgba(34,230,255,.9);
+      box-shadow: 0 0 14px rgba(34,230,255,.55);
+    }
+    #plan2d{
+      width:100%;
+      flex:1;
+      border-radius: 18px;
+      border:1px solid rgba(34,230,255,.18);
+      background: radial-gradient(700px 380px at 40% 25%, rgba(34,230,255,.08), transparent 55%), rgba(0,0,0,.22);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset, 0 0 24px rgba(34,230,255,.12);
+      display:block;
+    }
+    .phone-bottom{
+      height:86px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap:10px;
+      padding:12px;
+      align-items:center;
+    }
+    .icon-btn{
+      height:56px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .12s ease, box-shadow .12s ease;
+      user-select:none;
+    }
+    .icon-btn:hover{
+      border-color: rgba(34,230,255,.28);
+      box-shadow: 0 0 18px rgba(34,230,255,.12);
+    }
+    .icon-btn:active{ transform: translateY(1px) scale(.99); }
+    .glyph{
+      width:18px; height:18px;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,.16);
+      position:relative;
+      opacity:.9;
+    }
+    .glyph::after{
+      content:"";
+      position:absolute; inset:4px;
+      border-radius:4px;
+      border:1px solid rgba(34,230,255,.35);
+      box-shadow: 0 0 10px rgba(34,230,255,.2);
+    }
+
+    .stage{
+      position:relative;
+      /* border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: radial-gradient(900px 500px at 55% 35%, rgba(0,184,255,.08), transparent 60%), rgba(0,0,0,.18); */
+      overflow:hidden;
+      /* box-shadow: 0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04); */
+      min-height: 520px;
+    }
+    .stage::after{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.035) 0px,
+        rgba(255,255,255,.035) 1px,
+        rgba(0,0,0,0) 3px,
+        rgba(0,0,0,0) 6px
+      );
+      mix-blend-mode: overlay;
+      opacity:.30;
+    }
+    #c3d{ width:100%; height:100%; display:block; touch-action: none; }
+
+    .hud{
+      position:absolute;
+      left:14px; top:14px;
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    .hud strong{ font-size:13px; letter-spacing:.2px; display:block; }
+    .hud .meta{ font-size:12px; color: var(--muted); }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(34,230,255,.22);
+      background: rgba(34,230,255,.07);
+      color: rgba(34,230,255,.95);
+      box-shadow: 0 0 18px rgba(34,230,255,.10);
+      display:flex; gap:8px; align-items:center;
+      user-select:none;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .pill .dot{ width:7px; height:7px; border-radius:99px; }
+
+    .hud-right{
+      position:absolute;
+      right:14px; top:14px;
+      display:flex; flex-direction:column; gap:10px;
+      width: 300px;
+    }
+    .panel{
+      padding:12px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    .panel h3{ margin:0 0 6px 0; font-size:13px; letter-spacing:.2px; }
+    .panel p{ margin:4px 0; font-size:12px; color: var(--muted); line-height: 1.35; }
+    .kbd{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius: 8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size:11px;
+      color: rgba(255,255,255,.8);
+      margin-right:4px;
+    }
+
+    .controls{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    select, input[type="range"]{ width: 160px; }
+    select{
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.86);
+      border-radius: 10px;
+      padding:6px 10px;
+      outline:none;
+    }
+    input[type="range"]{ accent-color: rgba(34,230,255,.9); }
+    .small{ font-size: 11px; opacity: .75; }
+    .stat{ font-variant-numeric: tabular-nums; opacity:.85; }
+  </style>
+</head>
+
+<body>
+<div id="app">
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-top">
+        <div class="brand">
+          <span class="shield"></span>
+          <span>SMART HOME</span>
+        </div>
+        <div class="phone-time" id="phoneTime">--:--</div>
+      </div>
+
+      <div class="phone-body">
+        <div class="chip-row">
+          <div class="chip"><span class="dot"></span><span>FIRST FLOOR</span></div>
+          <div class="chip"><span style="opacity:.85">Wi-Fi</span><span style="color:rgba(34,230,255,.95)">●●●</span></div>
+        </div>
+
+        <canvas id="plan2d"></canvas>
+
+        <div class="chip-row" style="margin-top:2px">
+          <div class="chip"><span class="dot"></span><span id="selName2d">—</span></div>
+          <div class="chip"><span style="opacity:.85">Status</span><span style="color:rgba(34,230,255,.95)" id="selStatus2d">IDLE</span></div>
+        </div>
+      </div>
+
+      <div class="phone-bottom">
+        <div class="icon-btn" title="Lock"><div class="glyph"></div></div>
+        <div class="icon-btn" title="Garage"><div class="glyph"></div></div>
+        <div class="icon-btn" title="Lights"><div class="glyph"></div></div>
+        <div class="icon-btn" title="Sensors"><div class="glyph"></div></div>
+        <div class="icon-btn" title="Cameras"><div class="glyph"></div></div>
+        <div class="icon-btn" title="Alarm"><div class="glyph"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="c3d"></canvas>
+
+    <div class="hud">
+      <div>
+        <strong>3D SYNOPTIC</strong>
+        <div class="meta">
+          Left-drag = rotate • Right-drag = <b>Yaw only (asse Y)</b> • <span class="kbd">Shift</span>Drag = pan • Wheel = zoom • Click = select • <span class="kbd">R</span> Auto
+        </div>
+      </div>
+      <div class="pill" id="toggleAuto" title="Toggle auto-rotate (R)">
+        <span class="dot" id="autoDot"></span>
+        <span id="autoLbl">Auto</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="panel">
+        <h3>Selezione</h3>
+        <p><b>Ambiente:</b> <span id="selName">—</span></p>
+        <p><b>Info:</b> <span id="selInfo">—</span></p>
+        <p style="margin-top:8px"><b>Dispositivo:</b> <span id="selDevName">—</span></p>
+        <p><b>Tipo:</b> <span id="selDevType">—</span></p>
+        <p><b>Stato:</b> <span id="selDevStatus">—</span></p>
+        <p class="small" style="margin-top:6px; opacity:.8">
+          Suggerimento: clicca un device per selezionarlo • riclicca lo stesso device per fare toggle (luce/porta) o cambiare setpoint (termostato).
+        </p>
+      </div>
+
+      <div class="panel">
+        <h3>Quality & Performance</h3>
+
+        <div class="controls">
+          <div class="row">
+            <span style="font-size:12px; color:rgba(255,255,255,.78)">Preset</span>
+            <select id="qualitySelect">
+              <option value="low">Low (più leggero)</option>
+              <option value="med" selected>Medium</option>
+              <option value="high">High (più bello)</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <span style="font-size:12px; color:rgba(255,255,255,.78)">FPS</span>
+            <input id="fpsRange" type="range" min="20" max="60" step="5" value="45" />
+          </div>
+
+          <div class="row small">
+            <span>Render</span>
+            <span class="stat"><span id="fpsText">45</span> fps • <span id="msText">—</span> ms</span>
+          </div>
+        </div>
+
+        <p class="small" style="margin-top:10px">
+          Nessuna particella/punto decorativo. La griglia viene rigenerata solo a fine interazione.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+if (window.__SYNOPTIC3D_LOADED__) {
+  console.warn("Synoptic3D already loaded. Skipping re-init.");
+} else {
+  window.__SYNOPTIC3D_LOADED__ = true;
+
+(function(){
+  const WALL_H = 2.4;
+  const SCALE_BASE = 70;
+
+  const ROOMS = [
+    { id:"poggiolo1", name:"Poggiolo", info:"Balcone cucina", h:0.45, kind:"outdoor",
+      poly:[[4,0.0],[7.25,0.0],[7.25,0.95],[4,0.95]] },
+    { id:"cucina", name:"Cucina", info:"Cottura / pranzo",
+      poly:[[4,1],[7.25,1],[7.25,5.30],[4,5.30]] },
+    { id:"sala", name:"Sala", info:"Soggiorno",
+      poly:[[7.30,0.0],[12.30,0.0],[12.30,5.30],[7.30,5.30]] },
+    { id:"atrio", name:"Atrio", info:"Ingresso / snodo",
+      poly:[[4,5.35],[8.35,5.35],[8.35,6.55],[6.85,6.55],[6.85,8.05],[4,8.05]]},
+    { id:"stanza_sx", name:"Stanza", info:"Camera 1",
+      poly:[[0.0,6.85],[3.95,6.80],[3.95,8.05],[2.35,8.05],[2.35,13.35],[0,13.35]] },
+    { id:"corridoio", name:"Corridoio", info:"Distribuzione",
+      poly:[[5.65,8.10],[6.85,8.10],[6.85,11.10],[5.65,11.10]] },
+    { id:"stanza_dx", name:"Stanza", info:"Camera / studio",
+      poly:[[6.90,6.60],[8.40,6.60],[8.40,5.35],[11.25,5.35],[11.25,8.90],[6.90,8.90]] },
+    { id:"poggiolo2", name:"Poggiolo", info:"Balcone lato destro", h:0.45, kind:"outdoor",
+     poly:[[11.30,5.35],[12.30,5.35],[12.30,8.90],[11.30,8.90]] },
+    { id:"stanza_cx", name:"Stanza", info:"Camera 2",
+      poly:[[2.40,8.10],[5.60,8.10],[5.60,11.10],[5.20,11.10],[5.20,13.35],[2.40,13.35]] },
+    // { id:"bagno", name:"Bagno", info:"Servizi",
+    //   poly:[[5.65,11.15],[6.85,11.15],[6.85,14.35],[5.65,14.35]] },
+    { id:"bagno", name:"Bagno", info:"Servizi",
+      poly:[[5.25,11.15],[7.25,11.15],[7.25,14.35],[5.25,14.35]] },
+    { id:"stanza_dx_b", name:"Stanza", info:"Camera 3",
+      poly:[[6.90,8.95],[11.25,8.95],[11.25,14.35],[7.30,14.35],[7.30,11.10],[6.90,11.10]] },
+  ];
+
+  // ---------------------------------------------------------------------------
+  // DEVICES (oggetti "smart home") — coordinate nello stesso sistema della planimetria (x,z)
+  // Tipi supportati: thermostat | light | door
+  //
+  // - pos: [x, z] nello stesso sistema della planimetria (stessa scala di ROOMS)
+  // - roomId: id stanza (vedi ROOMS)
+  //
+  const DEVICES = [
+    { id:"t_sala",          type:"thermostat", name:"Termostato sala",  roomId:"sala",        pos:[8.40,5.30],  y:1.40, temp:21.4, setpoint:22.0 },
+    { id:"l_cucina",        type:"light",      name:"Luce cucina",      roomId:"cucina",      pos:[5.70, 2.10], y:2.40, on:true },
+    { id:"l_sala",          type:"light",      name:"Luce sala",        roomId:"sala",        pos:[9.70, 2.10], y:2.40, on:false },
+    { id:"l_bagno",         type:"light",      name:"Luce bagno",       roomId:"bagno",       pos:[6.25,12.70], y:2.40, on:false },
+    { id:"d_ingresso",      type:"door",       name:"Porta ingresso",   roomId:"atrio",       pos:[3.95, 6.50], y:2.40, open:false, locked:true},
+    { id:"d_bagno",         type:"door",       name:"Porta bagno",      roomId:"bagno",       pos:[5.80,11.10], y:2.40, open:false, locked:false },
+    { id:"d_stanza_dx_b",   type:"door",       name:"Porta stanza dx",  roomId:"stanza_dx_b", pos:[6.90,10.90], y:2.40, open:false, locked:false },
+    { id:"d_stanza_cx",   type:"door",       name:"Porta stanza cx",  roomId:"stanza_cx",     pos:[5.60,9.95],  y:2.40, open:false, locked:false },
+    //{ id:"d_stanza_dx_b",   type:"door", name:"Porta stanza dx", roomId:"stanza_dx_b",  pos:[8.80,11.10], y:2.40, open:false, locked:true },
+  ];
+
+  // --- Canvas Objects: Device --------------------------------------------------
+  // Un device è un "oggetto canvas" con draw/hitTest (2D + 3D).
+  function hashStr(s){
+    let h = 2166136261;
+    for(let i=0;i<s.length;i++){
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  class CanvasDevice {
+    constructor(data){
+      this.d = data; // riferimento allo stato (DEVICES)
+    }
+    glyph(){
+      const t = this.d.type;
+      if(t==="thermostat") return "T";
+      if(t==="light") return "L";
+      if(t==="door") return "D";
+      return "?";
+    }
+    color(){
+      const d = this.d;
+
+      // Overrides (custom):
+      //  - d.color: colore fisso
+      //  - d.colorOn/d.colorOff: per light
+      if(d.color) return d.color;
+
+      if(d.type==="light"){
+        if(d.on)  return d.colorOn  || "rgba(255,58,215,.95)";
+        return d.colorOff || "rgba(34,230,255,.85)";
+      }
+      if(d.type==="door"){
+        if(d.locked) return d.colorLocked || "rgba(34,230,255,.75)";
+        return d.open ? (d.colorOpen || "rgba(255,58,215,.95)") : (d.colorClosed || "rgba(255,255,255,.70)");
+      }
+      if(d.type==="thermostat"){
+        return d.colorThermo || "rgba(34,230,255,.90)";
+      }
+      return "rgba(255,255,255,.75)";
+    }
+    isSelected(){
+      return this.d.id === selectedDeviceId;
+    }
+
+    // --- 3D
+    screenPos3D(w, h){
+      const y = (typeof this.d.y === "number") ? this.d.y : 0.32;
+      return project([this.d.pos[0], y, this.d.pos[1]], w, h, SCALE_BASE);
+    }
+    hitTest3D(mx, my, w, h){
+      const p = this.screenPos3D(w, h);
+      if(!p) return { hit:false, d2: Infinity, p:null };
+      const R = 18;
+      const dx = p.x - mx, dy = p.y - my;
+      const d2 = dx*dx + dy*dy;
+      return d2 <= R*R ? { hit:true, d2, p } : { hit:false, d2, p };
+    }
+    draw3D(ctx, w, h, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const p = this.screenPos3D(w, h);
+
+      if(!p) return;
+      const active = isSel || (d.type==="light" && d.on) || (d.type==="door" && d.open);
+      const pulse = active ? (1 + 0.12*Math.sin(t*4 + (hashStr(d.id)%100)/10)) : 1;
+
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+      const r   = (isSel ? 8 : 6) * pulse;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+
+      ctx.strokeStyle = col;
+      ctx.lineWidth = isSel ? 2.0 : 1.4;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = isSel ? 18 : 14;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+      ctx.stroke();
+
+      ctx.globalAlpha = isSel ? 0.85 : 0.55;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y + r);
+      //ctx.lineTo(p.x, p.y + r + 10);
+      //ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      ctx.font = isSel ? "800 12px system-ui" : "700 11px system-ui";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.shadowBlur = 0;
+      ctx.fillText(this.glyph(), p.x, p.y-0.5);
+
+      if(isSel){
+        ctx.font = "700 12px system-ui";
+        ctx.fillStyle = "rgba(255,255,255,.86)";
+        ctx.shadowColor = col;
+        ctx.shadowBlur = 10;
+        ctx.fillText(d.name, p.x, p.y - 18);
+      }
+
+      ctx.restore();
+    }
+
+    // --- 2D
+    screenPos2D(m){
+      return { x: m.ox + this.d.pos[0]*m.s, y: m.oy + this.d.pos[1]*m.s };
+    }
+    hitTest2D(mx, my, m){
+      const p = this.screenPos2D(m);
+      const R = 14;
+      const dx = p.x - mx, dy = p.y - my;
+      const d2 = dx*dx + dy*dy;
+      return d2 <= R*R ? { hit:true, d2, p } : { hit:false, d2, p };
+    }
+    draw2D(ctx, m, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const p = this.screenPos2D(m);
+
+      const active = isSel || (d.type==="light" && d.on) || (d.type==="door" && d.open);
+      const pulse = active ? (1 + 0.10*Math.sin(t*4.5 + (hashStr(d.id)%100)/10)) : 1;
+
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+      const r = (isSel ? 7 : 5) * pulse;
+
+      ctx.save();
+      ctx.globalCompositeOperation="lighter";
+      ctx.strokeStyle = col;
+      ctx.lineWidth = isSel ? 2.0 : 1.4;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = isSel ? 14 : 12;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.font = isSel ? "800 11px system-ui" : "700 10px system-ui";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.fillText(this.glyph(), p.x, p.y);
+
+      ctx.restore();
+    }
+  }  // --- Canvas Object: Lamp (Luce) ---------------------------------------------
+  // Oggetto canvas dedicato alle luci con icona "lampadina" e raggi quando ON.
+  
+  // --- Canvas Object: Lamp (Luce) ---------------------------------------------
+  // Niente effetti (no glow/raggi/pulse). Colore modificabile via:
+  //  - d.color (sempre) oppure d.colorOn/d.colorOff (light ON/OFF)
+  class CanvasLamp extends CanvasDevice {
+    constructor(data){ super(data); }
+
+    hitTest3D(mx, my, w, h){
+      const p = this.screenPos3D(w, h);
+      if(!p) return { hit:false, d2: Infinity, p:null };
+      const R = 18;
+      const dx = p.x - mx, dy = p.y - my;
+      const d2 = dx*dx + dy*dy;
+      return d2 <= R*R ? { hit:true, d2, p } : { hit:false, d2, p };
+    }
+    hitTest2D(mx, my, m){
+      const p = this.screenPos2D(m);
+      const R = 14;
+      const dx = p.x - mx, dy = p.y - my;
+      const d2 = dx*dx + dy*dy;
+      return d2 <= R*R ? { hit:true, d2, p } : { hit:false, d2, p };
+    }
+
+    _drawBulb(ctx, x, y, scale, col){
+      const r = 6 * scale;
+      const neckW = 6 * scale;
+      const neckH = 6 * scale;
+      const baseW = 8 * scale;
+      const baseH = 5 * scale;
+
+      ctx.save();
+
+      // Bulb body
+      ctx.fillStyle = "rgba(255,255,255,.10)";
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.4 * scale;
+
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Filament hint
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.arc(x, y+1.2*scale, r*0.45, Math.PI*0.15, Math.PI*0.85);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Neck
+      ctx.fillStyle = "rgba(255,255,255,.06)";
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.2 * scale;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x - neckW/2, y + r - 1*scale, neckW, neckH, 2*scale);
+      else ctx.rect(x - neckW/2, y + r - 1*scale, neckW, neckH);
+      ctx.fill();
+      ctx.stroke();
+
+      // Base
+      ctx.fillStyle = "rgba(255,255,255,.08)";
+      ctx.strokeStyle = col;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x - baseW/2, y + r + neckH - 1*scale, baseW, baseH, 2*scale);
+      else ctx.rect(x - baseW/2, y + r + neckH - 1*scale, baseW, baseH);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    draw3D(ctx, w, h, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const p = this.screenPos3D(w, h);
+      if(!p) return;
+
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+      const scale = isSel ? 1.12 : 1.0;
+
+      ctx.save();
+
+      // ring selezione (senza glow)
+      if(isSel){
+        ctx.strokeStyle = "rgba(255,58,215,.85)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+        ctx.stroke();
+      }
+
+      this._drawBulb(ctx, p.x, p.y, scale, col);
+
+      if(isSel){
+        ctx.font = "700 12px system-ui";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillStyle = "rgba(255,255,255,.86)";
+        ctx.fillText(d.name, p.x, p.y - 18);
+      }
+
+      ctx.restore();
+    }
+
+    draw2D(ctx, m, t=0){
+      const isSel = this.isSelected();
+      const p = this.screenPos2D(m);
+
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+      const scale = isSel ? 1.10 : 0.95;
+
+      if(isSel){
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,58,215,.80)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.restore();
+      }
+      this._drawBulb(ctx, p.x, p.y, scale, col);
+    }
+  }
+
+  // --- Canvas Object: Sprite (canvas custom) -----------------------------------
+  // Permette di usare un canvas (offscreen o hidden in DOM) come icona del device.
+  // Usa:
+  //  - d.iconCanvas: HTMLCanvasElement
+  //  - d.iconId: id di un <canvas> in pagina (può essere display:none)
+  class CanvasSpriteDevice extends CanvasDevice {
+    constructor(data){
+      super(data);
+      this.icon = this._resolveIcon();
+    }
+    _resolveIcon(){
+      const d = this.d;
+      if(d.iconCanvas && d.iconCanvas.getContext) return d.iconCanvas;
+      if(typeof d.iconId === "string"){
+        const el = document.getElementById(d.iconId);
+        if(el && el.tagName === "CANVAS") return el;
+      }
+      return null;
+    }
+    draw3D(ctx, w, h, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const p = this.screenPos3D(w, h);
+      if(!p) return;
+
+      const icon = this.icon || this._resolveIcon();
+      if(!icon){
+        return super.draw3D(ctx, w, h, t);
+      }
+
+      const size = (d.iconScale ?? (isSel ? 1.25 : 1.0)) * 20;
+      ctx.save();
+      ctx.imageSmoothingEnabled = true;
+
+      ctx.strokeStyle = isSel ? "rgba(255,58,215,.85)" : (d.frameColor || "rgba(34,230,255,.55)");
+      ctx.lineWidth = isSel ? 2 : 1.2;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(p.x - size/2 - 4, p.y - size/2 - 4, size+8, size+8, 8);
+      else ctx.rect(p.x - size/2 - 4, p.y - size/2 - 4, size+8, size+8);
+      ctx.stroke();
+
+      ctx.drawImage(icon, p.x - size/2, p.y - size/2, size, size);
+
+      if(isSel){
+        ctx.font = "700 12px system-ui";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillStyle = "rgba(255,255,255,.86)";
+        ctx.fillText(d.name, p.x, p.y - size/2 - 12);
+      }
+      ctx.restore();
+    }
+    draw2D(ctx, m, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const p = this.screenPos2D(m);
+
+      const icon = this.icon || this._resolveIcon();
+      if(!icon){
+        return super.draw2D(ctx, m, t);
+      }
+
+      const size = (d.iconScale2D ?? (isSel ? 1.15 : 0.95)) * 18;
+      ctx.save();
+      ctx.imageSmoothingEnabled = true;
+
+      ctx.strokeStyle = isSel ? "rgba(255,58,215,.85)" : (d.frameColor || "rgba(34,230,255,.55)");
+      ctx.lineWidth = isSel ? 2 : 1.2;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(p.x - size/2 - 3, p.y - size/2 - 3, size+6, size+6, 7);
+      else ctx.rect(p.x - size/2 - 3, p.y - size/2 - 3, size+6, size+6);
+      ctx.stroke();
+
+      ctx.drawImage(icon, p.x - size/2, p.y - size/2, size, size);
+      ctx.restore();
+    }
+  }
+
+  // --- Canvas Object: Door (render "3D") ---------------------------------------
+  // Porta come pannello 3D (wireframe) con apertura (rotazione su cerniera).
+  class CanvasDoor3D extends CanvasDevice {
+    constructor(data){
+      super(data);
+      this._cached = { roomId:null, angle:0 };
+    }
+
+    _distPointSegSq(px,pz, ax,az, bx,bz){
+      const abx = bx-ax, abz = bz-az;
+      const apx = px-ax, apz = pz-az;
+      const ab2 = abx*abx + abz*abz + 1e-9;
+      let t = (apx*abx + apz*abz) / ab2;
+      t = Math.max(0, Math.min(1, t));
+      const cx = ax + abx*t;
+      const cz = az + abz*t;
+      const dx = px - cx;
+      const dz = pz - cz;
+      return dx*dx + dz*dz;
+    }
+
+    _closestWallAngle(){
+      const d = this.d;
+      if(typeof d.wallAngleDeg === "number") return (d.wallAngleDeg * Math.PI/180);
+
+      const room = getRoomById(d.roomId);
+      if(!room || !room.poly || room.poly.length < 2) return 0;
+
+      if(this._cached.roomId === room.id) return this._cached.angle;
+
+      const px = d.pos[0], pz = d.pos[1];
+      let best = { d2: Infinity, ax:0, az:0, bx:1, bz:0 };
+
+      for(let i=0;i<room.poly.length;i++){
+        const [ax,az] = room.poly[i];
+        const [bx,bz] = room.poly[(i+1)%room.poly.length];
+        const d2 = this._distPointSegSq(px,pz, ax,az, bx,bz);
+        if(d2 < best.d2) best = { d2, ax,az, bx,bz };
+      }
+      const ang = Math.atan2(best.bz-best.az, best.bx-best.ax);
+      this._cached = { roomId: room.id, angle: ang };
+      return ang;
+    }
+
+    _doorGeom(){
+      const d = this.d;
+      const w = (typeof d.width === "number") ? d.width : 0.90;
+      const h = (typeof d.height === "number") ? d.height : 2.10;
+      const th = (typeof d.thickness === "number") ? d.thickness : 0.06;
+
+      const hingeSign = (d.hinge === "right") ? -1 : +1;
+      const openA = ((typeof d.openAngleDeg === "number") ? d.openAngleDeg : 90) * Math.PI/180;
+
+      const wallAng = this._closestWallAngle();
+      const ang = wallAng + (d.open ? hingeSign * openA : 0);
+
+      const dx = Math.cos(ang) * w;
+      const dz = Math.sin(ang) * w;
+
+      const nx = -Math.sin(ang) * th;
+      const nz =  Math.cos(ang) * th;
+
+      const x = d.pos[0], z = d.pos[1];
+
+      // front
+      const p0 = [x, 0.02, z];
+      const p1 = [x+dx, 0.02, z+dz];
+      const p2 = [x+dx, h,    z+dz];
+      const p3 = [x,    h,    z];
+
+      // back
+      const q0 = [p0[0]+nx, p0[1], p0[2]+nz];
+      const q1 = [p1[0]+nx, p1[1], p1[2]+nz];
+      const q2 = [p2[0]+nx, p2[1], p2[2]+nz];
+      const q3 = [p3[0]+nx, p3[1], p3[2]+nz];
+
+      return { p:[p0,p1,p2,p3], q:[q0,q1,q2,q3] };
+    }
+
+    hitTest3D(mx, my, w, h){
+      const g = this._doorGeom();
+      const P = g.p.map(p => project(p, w, h, SCALE_BASE));
+      if(P.some(p => !p)) return super.hitTest3D(mx, my, w, h);
+
+      if(pointInPoly({x:mx,y:my}, P)) return { hit:true, d2: 0, p: P[0] };
+
+      const cx = (P[0].x+P[1].x+P[2].x+P[3].x)/4;
+      const cy = (P[0].y+P[1].y+P[2].y+P[3].y)/4;
+      const dx = cx-mx, dy = cy-my;
+      const d2 = dx*dx + dy*dy;
+      return { hit: d2 < 22*22, d2, p: {x:cx,y:cy,depth:0} };
+    }
+
+    draw3D(ctx, w, h, t=0){
+      const d = this.d;
+      const isSel = this.isSelected();
+      const g = this._doorGeom();
+
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+      const lw  = isSel ? 2.0 : 1.4;
+
+      const A = g.p.map(p => project(p, w, h, SCALE_BASE));
+      const B = g.q.map(p => project(p, w, h, SCALE_BASE));
+      if(A.some(p => !p) || B.some(p => !p)) return;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-over";
+
+      ctx.fillStyle = d.open ? "rgba(255,58,215,.05)" : "rgba(34,230,255,.04)";
+      ctx.strokeStyle = col;
+      ctx.lineWidth = lw;
+
+      // front face
+      ctx.beginPath();
+      ctx.moveTo(A[0].x,A[0].y);
+      ctx.lineTo(A[1].x,A[1].y);
+      ctx.lineTo(A[2].x,A[2].y);
+      ctx.lineTo(A[3].x,A[3].y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // back face
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.moveTo(B[0].x,B[0].y);
+      ctx.lineTo(B[1].x,B[1].y);
+      ctx.lineTo(B[2].x,B[2].y);
+      ctx.lineTo(B[3].x,B[3].y);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // thickness edges
+      ctx.globalAlpha = 0.45;
+      for(let i=0;i<4;i++){
+        ctx.beginPath();
+        ctx.moveTo(A[i].x,A[i].y);
+        ctx.lineTo(B[i].x,B[i].y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      if(d.locked){
+        const cx = (A[0].x + A[3].x)/2;
+        const cy = (A[0].y + A[3].y)/2;
+        ctx.fillStyle = "rgba(255,255,255,.78)";
+        ctx.font = "800 12px system-ui";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillText("🔒", cx, cy);
+      }
+
+      if(isSel){
+        const cx = (A[0].x+A[1].x+A[2].x+A[3].x)/4;
+        const cy = (A[0].y+A[1].y+A[2].y+A[3].y)/4;
+        ctx.fillStyle = "rgba(255,255,255,.86)";
+        ctx.font = "700 12px system-ui";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillText(d.name, cx, cy - 18);
+      }
+
+      ctx.restore();
+    }
+
+    draw2D(ctx, m, t=0){
+      // simbolo porta su minimappa: linea su muro + arco apertura se open
+      const d = this.d;
+      const isSel = this.isSelected();
+      const col = isSel ? "rgba(255,58,215,.95)" : this.color();
+
+      const x = m.ox + d.pos[0]*m.s;
+      const y = m.oy + d.pos[1]*m.s;
+
+      const wallAng = this._closestWallAngle();
+      const wDoor = (((typeof d.width === "number") ? d.width : 0.90) * m.s);
+
+      const ux = Math.cos(wallAng), uz = Math.sin(wallAng);
+      const x1 = x + ux * (wDoor*0.6);
+      const y1 = y + uz * (wDoor*0.6);
+
+      ctx.save();
+      ctx.globalCompositeOperation="lighter";
+      ctx.strokeStyle = col;
+      ctx.lineWidth = isSel ? 2.2 : 1.6;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      if(d.open){
+        const hinge = (d.hinge === "right") ? -1 : +1;
+        const a0 = wallAng;
+        const a1 = wallAng + hinge * (Math.PI/2);
+        ctx.arc(x, y, wDoor*0.6, -a0, -a1, hinge < 0);
+      } else {
+        ctx.lineTo(x1, y1);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,.85)";
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  // --- Device registry / factory ------------------------------------------------
+  // Aggiungi un tipo custom:
+  //   registerDeviceType("myType", MyCanvasClass);
+  // Oppure per un singolo device:
+  //   { ..., iconId:"myHiddenCanvasId" }  -> CanvasSpriteDevice
+  const DEVICE_TYPE_REGISTRY = {
+    thermostat: CanvasDevice,
+    light: CanvasLamp,
+    door: CanvasDoor3D
+  };
+
+  function registerDeviceType(type, ctor){
+    DEVICE_TYPE_REGISTRY[type] = ctor;
+    rebuildDeviceObjects();
+    dirty2D = true;
+  }
+
+  function createDeviceObject(d){
+    if(d && (d.iconCanvas || d.iconId)) return new CanvasSpriteDevice(d);
+    const Ctor = DEVICE_TYPE_REGISTRY[d.type] || CanvasDevice;
+    return new Ctor(d);
+  }
+
+  let DEVICE_OBJECTS = DEVICES.map(createDeviceObject);
+
+  function rebuildDeviceObjects(){
+    DEVICE_OBJECTS = DEVICES.map(createDeviceObject);
+  }
+
+  function polyEdges(poly){
+    const edges=[];
+    for(let i=0;i<poly.length;i++) edges.push([poly[i], poly[(i+1)%poly.length]]);
+    return edges;
+  }
+  function roomCenter(poly) {
+  // poly: array di punti [x,z] (o [x,y])
+  let a = 0;
+  let cx = 0;
+  let cz = 0;
+
+  const n = poly.length;
+  for (let i = 0; i < n; i++) {
+    const [x0, z0] = poly[i];
+    const [x1, z1] = poly[(i + 1) % n];
+
+    const cross = x0 * z1 - x1 * z0; // prodotto vettoriale 2D
+    a += cross;
+    cx += (x0 + x1) * cross;
+    cz += (z0 + z1) * cross;
+  }
+
+  a *= 0.5;
+
+  // fallback se il poligono è degenerato (area ~ 0)
+  if (Math.abs(a) < 1e-9) {
+    const cxAvg = poly.reduce((s, p) => s + p[0], 0) / n;
+    const czAvg = poly.reduce((s, p) => s + p[1], 0) / n;
+    return [cxAvg, czAvg];
+  }
+
+  cx /= (6 * a);
+  cz /= (6 * a);
+  return [cx, cz];
+}
+
+  const ROOM_META = ROOMS.map(r => ({ ...r, edges: polyEdges(r.poly), center: roomCenter(r.poly) }));
+
+  function computeBounds(rooms){
+    let minX=Infinity,minZ=Infinity,maxX=-Infinity,maxZ=-Infinity;
+    for(const r of rooms){
+      for(const [x,z] of r.poly){
+        minX=Math.min(minX,x); minZ=Math.min(minZ,z);
+        maxX=Math.max(maxX,x); maxZ=Math.max(maxZ,z);
+      }
+    }
+    return {minX,minZ,maxX,maxZ, w:(maxX-minX), d:(maxZ-minZ)};
+  }
+  const BOUNDS = computeBounds(ROOMS);
+  const MODEL_CENTER = { x:(BOUNDS.minX+BOUNDS.maxX)/2, z:(BOUNDS.minZ+BOUNDS.maxZ)/2 };
+
+  const c3d = document.getElementById("c3d");
+  const ctx3d = c3d.getContext("2d", { alpha:true });
+
+  const c2d = document.getElementById("plan2d");
+  const ctx2d = c2d.getContext("2d", { alpha:true });
+
+  function resizeCanvas(canvas, ctx){
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.imageSmoothingEnabled = true;
+    return { w, h, dpr };
+  }
+
+  const bgLayer = document.createElement("canvas");
+  const bgCtx = bgLayer.getContext("2d", { alpha:true });
+
+  const decorLayer = document.createElement("canvas");
+  const decorCtx = decorLayer.getContext("2d", { alpha:true });
+
+  let bgDirty = true;
+  let decorDirty = true;
+  let lastDecorKey = "";
+
+  const QUALITY_PRESETS = {
+    low:  { gridStep: 1.8, gridAlpha: 0.055 },
+    med:  { gridStep: 1.1, gridAlpha: 0.072 },
+    high: { gridStep: 0.8, gridAlpha: 0.088 },
+  };
+  let q = { ...QUALITY_PRESETS.med };
+
+  let dirty2D = true;
+  let selectedRoomId = null;
+  let selectedDeviceId = null;
+
+  // ✅ mirror scelto automaticamente per coerenza "Cucina a sinistra di Sala" nella 3D
+  let mirrorX3D = 1; // +1 normale, -1 specchio
+
+  const cam = {
+    rotX: -0.28,
+    rotY:  0.0,
+    zoom:  0.7,
+    panX:  0,
+    panY:  0,
+    autoRotate: true,
+    autoSpeed: 0.15 // rad/s (continuo)
+  };
+
+  let dragging = false;
+  let last = {x:0,y:0};
+
+  let down = {x:0,y:0};
+  let dragMoved = false;
+  const CLICK_MOVE_PX = 6;
+
+  let interactionUntil = 0;
+  function markInteracting(ms = 180){
+    interactionUntil = Math.max(interactionUntil, performance.now() + ms);
+  }
+  function isInteracting(){
+    return dragging || performance.now() < interactionUntil;
+  }
+
+  function rotX([x,y,z], a){
+    const c=Math.cos(a), s=Math.sin(a);
+    return [x, y*c - z*s, y*s + z*c];
+  }
+  function rotY([x,y,z], a){
+    const c=Math.cos(a), s=Math.sin(a);
+    return [ x*c + z*s, y, -x*s + z*c ];
+  }
+
+  function project(p3, stageW, stageH, scalePxPerM, mirrorOverride = null){
+    const mirror = (mirrorOverride === null) ? mirrorX3D : mirrorOverride;
+
+    const shifted = [p3[0]-MODEL_CENTER.x, p3[1], p3[2]-MODEL_CENTER.z];
+
+    let p = [
+      shifted[0]*scalePxPerM*cam.zoom,
+      shifted[1]*scalePxPerM*cam.zoom,
+      shifted[2]*scalePxPerM*cam.zoom
+    ];
+
+    p = rotY(p, cam.rotY);
+    p = rotX(p, cam.rotX);
+
+    const persp = 980;
+    const z = p[2] + persp;
+
+    // Near-plane clipping: quando z è troppo vicino/negativo (punti dietro la camera)
+    // la proiezione esplode e genera linee "a stella" (punto di fuga) durante lo zoom.
+    const NEAR = 60;
+    if(z < NEAR) return null;
+
+    const sx = p[0] * (persp / z);
+    const sy = p[1] * (persp / z);
+
+    // Safety clamp
+    if(!Number.isFinite(sx) || !Number.isFinite(sy)) return null;
+    if(Math.abs(sx) > 200000 || Math.abs(sy) > 200000) return null;
+
+    const cx = stageW/2 + cam.panX;
+    const cy = stageH/2 + cam.panY + 35;
+
+    return { x: cx + sx * mirror, y: cy - sy, depth: p[2] };
+  }
+
+  // ✅ calibrazione robusta: prova mirror=+1 e mirror=-1 e sceglie quello dove Cucina.x < Sala.x
+  function calibrateMirror(){
+    if(!c3d.clientWidth || !c3d.clientHeight) return;
+
+    const cucina = ROOM_META.find(r => r.id === "cucina");
+    const sala   = ROOM_META.find(r => r.id === "sala");
+    if(!cucina || !sala) return;
+
+    const saved = { rotY: cam.rotY, rotX: cam.rotX, panX: cam.panX, panY: cam.panY, zoom: cam.zoom };
+    // posa "neutra" per test
+    cam.rotY = 0;
+    cam.rotX = -0.88;
+    cam.panX = 0;
+    cam.panY = 0;
+    cam.zoom = 1;
+
+    const w = c3d.clientWidth, h = c3d.clientHeight;
+
+    const pc1 = project([cucina.center[0], 0, cucina.center[1]], w, h, SCALE_BASE, +1);
+    const ps1 = project([sala.center[0],   0, sala.center[1]],   w, h, SCALE_BASE, +1);
+
+    const pc2 = project([cucina.center[0], 0, cucina.center[1]], w, h, SCALE_BASE, -1);
+    const ps2 = project([sala.center[0],   0, sala.center[1]],   w, h, SCALE_BASE, -1);
+      if(!pc1 || !ps1 || !pc2 || !ps2) return;
+
+
+    const ok1 = pc1.x < ps1.x;
+    const ok2 = pc2.x < ps2.x;
+
+    if(ok1 && !ok2) mirrorX3D = -1;
+    else if(ok2 && !ok1) mirrorX3D = -1;
+    else {
+      // fallback: scegli quello che massimizza la separazione corretta
+      const sep1 = ps1.x - pc1.x;
+      const sep2 = ps2.x - pc2.x;
+      mirrorX3D = (sep1 >= sep2) ? +1 : -1;
+    }
+
+    // restore camera
+    cam.rotY = saved.rotY;
+    cam.rotX = saved.rotX;
+    cam.panX = saved.panX;
+    cam.panY = saved.panY;
+    cam.zoom = saved.zoom;
+
+    decorDirty = true;
+  }
+
+  function resizeAll(){
+    const r3 = resizeCanvas(c3d, ctx3d);
+    resizeCanvas(c2d, ctx2d);
+
+    bgLayer.width = c3d.width;
+    bgLayer.height = c3d.height;
+    bgCtx.setTransform(r3.dpr,0,0,r3.dpr,0,0);
+
+    decorLayer.width = c3d.width;
+    decorLayer.height = c3d.height;
+    decorCtx.setTransform(r3.dpr,0,0,r3.dpr,0,0);
+
+    bgDirty = true;
+    decorDirty = true;
+    dirty2D = true;
+
+    calibrateMirror();
+  }
+  window.addEventListener("resize", resizeAll);
+
+  const ROT_SENS = 0.018;
+  const PAN_SENS = 1.35;
+
+  c3d.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  c3d.addEventListener("pointerdown", (e)=>{
+    dragging = true;
+    dragMoved = false;
+    down = { x: e.clientX, y: e.clientY };
+    last = { x: e.clientX, y: e.clientY };
+    c3d.setPointerCapture(e.pointerId);
+    markInteracting(260);
+  });
+
+  function pointInPoly(pt, poly){
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const xi=poly[i].x, yi=poly[i].y;
+      const xj=poly[j].x, yj=poly[j].y;
+      const intersect = ((yi>pt.y)!==(yj>pt.y)) && (pt.x < (xj-xi)*(pt.y-yi)/(yj-yi+1e-9)+xi);
+      if(intersect) inside=!inside;
+    }
+    return inside;
+  }
+
+  function getRoomById(id){
+    return ROOM_META.find(r => r.id === id) || null;
+  }
+  function getDeviceById(id){
+    return DEVICES.find(d => d.id === id) || null;
+  }
+  function deviceTypeLabel(t){
+    if(t==="thermostat") return "Termostato";
+    if(t==="light") return "Luce";
+    if(t==="door") return "Porta";
+    return t || "—";
+  }
+  function deviceStatusLabel(d){
+    if(!d) return "—";
+    if(d.type==="light") return d.on ? "ON" : "OFF";
+    if(d.type==="door"){
+      const lock = (d.locked ? "LOCK" : "UNLOCK");
+      const open = (d.open ? "OPEN" : "CLOSED");
+      return `${open} • ${lock}`;
+    }
+    if(d.type==="thermostat"){
+      const t = (typeof d.temp === "number") ? d.temp.toFixed(1) : "—";
+      const sp = (typeof d.setpoint === "number") ? d.setpoint.toFixed(1) : "—";
+      return `${t}°C (SP ${sp}°C)`;
+    }
+    return "—";
+  }
+  function refreshSelectionUI(){
+    const room = getRoomById(selectedRoomId);
+    const dev  = getDeviceById(selectedDeviceId);
+
+    document.getElementById("selName").textContent = room ? room.name : "—";
+    document.getElementById("selInfo").textContent = room ? room.info : "—";
+
+    document.getElementById("selDevName").textContent = dev ? dev.name : "—";
+    document.getElementById("selDevType").textContent = dev ? deviceTypeLabel(dev.type) : "—";
+    document.getElementById("selDevStatus").textContent = dev ? deviceStatusLabel(dev) : "—";
+
+    // mini-phone
+    document.getElementById("selName2d").textContent = dev ? dev.name : (room ? room.name : "—");
+    document.getElementById("selStatus2d").textContent = dev ? deviceStatusLabel(dev) : (room ? "ACTIVE" : "IDLE");
+
+    dirty2D = true;
+  }
+  function setSelectedRoom(room){
+    selectedDeviceId = null;
+    selectedRoomId = room ? room.id : null;
+    refreshSelectionUI();
+  }
+  function setSelectedDevice(dev){
+    selectedDeviceId = dev ? dev.id : null;
+    selectedRoomId = dev ? dev.roomId : null;
+    refreshSelectionUI();
+  }
+  function toggleDevice(dev){
+    if(!dev) return;
+
+    if(dev.type === "light"){
+      dev.on = !dev.on;
+      return;
+    }
+    if(dev.type === "door"){
+      if(dev.locked){
+        dev.locked = false;
+      } else {
+        dev.open = !dev.open;
+      }
+      return;
+    }
+    if(dev.type === "thermostat"){
+      if(typeof dev.setpoint !== "number") dev.setpoint = 22;
+      dev.setpoint = Math.round((dev.setpoint + 0.5) * 2) / 2;
+      if(dev.setpoint > 24) dev.setpoint = 18;
+      return;
+    }
+  }
+
+  function pickAtClient(clientX, clientY){
+    const rect = c3d.getBoundingClientRect();
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
+
+    const w = c3d.clientWidth;
+    const h = c3d.clientHeight;
+
+
+    // ---- pick device (CanvasDevice objects, prima delle stanze) ----
+    let bestObj = null;
+    let bestD2 = 18*18;
+    for(const obj of DEVICE_OBJECTS){
+      const hit = obj.hitTest3D(mx, my, w, h);
+      if(hit.hit && hit.d2 < bestD2){
+        bestD2 = hit.d2;
+        bestObj = obj;
+      }
+    }
+    if(bestObj){
+      const d = bestObj.d;
+      const wasSame = (selectedDeviceId === d.id);
+      setSelectedDevice(d);
+      if(wasSame){
+        toggleDevice(d);
+        refreshSelectionUI();
+      }
+      return;
+    }
+
+    const floors = ROOM_META
+      .map(r => ({
+        room: r,
+        proj: r.poly.map(([x,z]) => project([x, 0, z], w, h, SCALE_BASE))
+      }))
+      .filter(o => o.proj.every(p => p));
+
+    floors.sort((a,b)=>{
+      const da = a.proj.reduce((s,p)=>s+p.depth,0)/a.proj.length;
+      const db = b.proj.reduce((s,p)=>s+p.depth,0)/b.proj.length;
+      return db - da;
+    });
+
+    let hit=null;
+    for(const f of floors){
+      if(pointInPoly({x:mx,y:my}, f.proj)){ hit=f.room; break; }
+    }
+    setSelectedRoom(hit);
+  }
+
+  c3d.addEventListener("pointermove", (e)=>{
+    if(!dragging) return;
+
+    const dx = e.clientX - last.x;
+    const dy = e.clientY - last.y;
+    last = {x:e.clientX, y:e.clientY};
+
+    if(!dragMoved){
+      if(Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y) > CLICK_MOVE_PX){
+        dragMoved = true;
+      }
+    }
+
+    markInteracting(260);
+
+    const leftDown = (e.buttons & 2) === 2;
+    const rightDown  = (e.buttons & 1) === 1;
+
+    if(e.shiftKey){
+      cam.panX += dx * PAN_SENS;
+      cam.panY += dy * PAN_SENS;
+      return;
+    }
+
+    // yaw (asse Y) — compenso mirror per mantenere il feeling coerente
+    cam.rotY -= dx * ROT_SENS * mirrorX3D;
+
+    // RMB: SOLO yaw
+    if(rightDown && !leftDown){
+      return;
+    }
+
+    // LMB: yaw + pitch
+    if(leftDown){
+      cam.rotX -= dy * ROT_SENS;
+      cam.rotX = Math.max(-1.45, Math.min(-0.15, cam.rotX));
+    }
+  });
+
+  c3d.addEventListener("pointerup", (e)=>{
+    const isLeftButton = (e.button === 0);
+    const wasClick = isLeftButton && !dragMoved && !e.shiftKey;
+
+    dragging = false;
+    decorDirty = true;
+    markInteracting(120);
+
+    if(wasClick){
+      pickAtClient(e.clientX, e.clientY);
+    }
+  });
+
+  c3d.addEventListener("pointercancel", ()=>{
+    dragging = false;
+    decorDirty = true;
+    markInteracting(120);
+  });
+
+  c3d.addEventListener("wheel", (e)=>{
+    e.preventDefault();
+    const k = Math.exp(-e.deltaY * 0.0016);
+    cam.zoom = Math.max(0.35, Math.min(3.0, cam.zoom * k));
+    markInteracting(420);
+    decorDirty = true;
+  },{passive:false});
+
+  document.addEventListener("keydown", (e)=>{
+    if(e.key.toLowerCase()==="r"){
+      cam.autoRotate = !cam.autoRotate;
+      syncAutoUI();
+      decorDirty = true;
+    }
+  });
+
+  function lineGlow(ctx, x1,y1,x2,y2, color, w=1.2, blur=12, alpha=1){
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = alpha;
+    ctx.lineCap="round";
+    ctx.lineJoin="round";
+    ctx.strokeStyle = color;
+    ctx.lineWidth = w;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = blur;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function linePlain(ctx, x1,y1,x2,y2, color, w=1){
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function renderBackground(){
+    // const w = c3d.clientWidth, h = c3d.clientHeight;
+    // bgCtx.clearRect(0,0,w,h);
+
+    // // const g = bgCtx.createRadialGradient(w*0.55,h*0.35,40, w*0.55,h*0.45, Math.max(w,h));
+    // // g.addColorStop(0, "rgba(0,184,255,.14)");
+    // // g.addColorStop(0.4, "rgba(0,184,255,.06)");
+    // // g.addColorStop(1, "rgba(0,0,0,0)");
+    // // bgCtx.fillStyle = g;
+    // // bgCtx.fillRect(0,0,w,h);
+
+    // bgCtx.fillStyle = "rgba(0,0,0,.16)";
+    // bgCtx.fillRect(0,0,w,h);
+
+    bgDirty = true;
+  }
+
+  function decorKey(){
+    return [
+      cam.rotX.toFixed(3), cam.rotY.toFixed(3),
+      cam.zoom.toFixed(3),
+      cam.panX.toFixed(1), cam.panY.toFixed(1),
+      q.gridStep.toFixed(2), q.gridAlpha.toFixed(3),
+      mirrorX3D,
+      c3d.clientWidth, c3d.clientHeight
+    ].join("|");
+  }
+
+  function renderDecor(){
+    const w = c3d.clientWidth, h = c3d.clientHeight;
+    decorCtx.clearRect(0,0,w,h);
+
+    const gridY = -0.18;
+    const margin = 2.0;
+    const step = q.gridStep;
+
+    const x0 = BOUNDS.minX - margin, x1 = BOUNDS.maxX + margin;
+    const z0 = BOUNDS.minZ - margin, z1 = BOUNDS.maxZ + margin;
+
+    const col = `rgba(0,184,255,${q.gridAlpha})`;
+
+    for(let x = Math.floor(x0/step)*step; x <= x1; x += step){
+      const p1 = project([x, gridY, z0], w, h, SCALE_BASE);
+      const p2 = project([x, gridY, z1], w, h, SCALE_BASE);
+            if(!p1 || !p2) continue;
+      linePlain(decorCtx, p1.x,p1.y,p2.x,p2.y, col, 1);
+    }
+    for(let z = Math.floor(z0/step)*step; z <= z1; z += step){
+      const p1 = project([x0, gridY, z], w, h, SCALE_BASE);
+      const p2 = project([x1, gridY, z], w, h, SCALE_BASE);
+            if(!p1 || !p2) continue;
+      linePlain(decorCtx, p1.x,p1.y,p2.x,p2.y, col, 1);
+    }
+
+    decorDirty = false;
+    lastDecorKey = decorKey();
+  }
+
+  let lastDrawT = performance.now();
+
+  function draw3D(nowT){
+    const t0 = performance.now();
+    const w = c3d.clientWidth, h = c3d.clientHeight;
+
+    if(bgDirty) renderBackground();
+
+    ctx3d.clearRect(0,0,w,h);
+    ctx3d.drawImage(bgLayer, 0,0, w,h);
+
+    const dt = Math.min(0.05, (nowT - lastDrawT) / 1000);
+    lastDrawT = nowT;
+
+    // ✅ auto-rotate continuo (yaw su asse Y)
+    if(cam.autoRotate && !dragging){
+      cam.rotY += dt * cam.autoSpeed * mirrorX3D; // mirrorX3D per senso naturale del drag
+    }
+
+    const allowDecor = !isInteracting();
+    const key = decorKey();
+    if(allowDecor){
+      if(decorDirty || key !== lastDecorKey){
+        renderDecor();
+      }
+      ctx3d.drawImage(decorLayer, 0,0, w,h);
+    }
+
+    for(const r of ROOM_META){
+      const isSel = r.id === selectedRoomId;
+      const isOutdoor = r.kind === "outdoor";
+      const col = isSel
+        ? "rgba(255,58,215,.95)"
+        : (isOutdoor ? "rgba(255,255,255,.45)" : "rgba(34,230,255,.85)");
+
+      const blur = isSel ? 18 : (isOutdoor ? 10 : 12);
+      const lw   = isSel ? 1.9 : (isOutdoor ? 1.05 : 1.25);
+
+      const hRoom = (typeof r.h === "number") ? r.h : WALL_H;
+
+      for(const [A,B] of r.edges){
+        const a0 = project([A[0], 0,     A[1]], w, h, SCALE_BASE);
+        const b0 = project([B[0], 0,     B[1]], w, h, SCALE_BASE);
+        const a1 = project([A[0], hRoom, A[1]], w, h, SCALE_BASE);
+        const b1 = project([B[0], hRoom, B[1]], w, h, SCALE_BASE);
+
+        if(!a0 || !b0 || !a1 || !b1) continue;
+        lineGlow(ctx3d, a0.x,a0.y,b0.x,b0.y, col, lw, blur, isSel?1:(isOutdoor?0.55:0.85));
+
+        if(hRoom > 0.05){
+          lineGlow(ctx3d, a1.x,a1.y,b1.x,b1.y, col, Math.max(1, lw-0.15), Math.max(8, blur-4), isSel?0.9:(isOutdoor?0.35:0.55));
+          lineGlow(ctx3d, a0.x,a0.y,a1.x,a1.y, col, Math.max(1, lw-0.2),  Math.max(8, blur-6), isSel?0.85:(isOutdoor?0.18:0.35));
+        }
+      }
+
+      const cp = project([r.center[0], 0.06, r.center[1]], w, h, SCALE_BASE);
+      if(!cp) continue;
+      ctx3d.save();
+      ctx3d.globalCompositeOperation="lighter";
+      ctx3d.font = isSel ? "700 14px system-ui" : (isOutdoor ? "600 12px system-ui" : "600 13px system-ui");
+      ctx3d.textAlign="center";
+      ctx3d.textBaseline="middle";
+      ctx3d.fillStyle = isSel ? "rgba(255,255,255,.92)" : (isOutdoor ? "rgba(255,255,255,.70)" : "rgba(34,230,255,.78)");
+      ctx3d.shadowColor = isSel ? "rgba(255,58,215,.22)" : (isOutdoor ? "rgba(255,255,255,.10)" : "rgba(34,230,255,.18)");
+      ctx3d.shadowBlur = isSel ? 14 : 10;
+      ctx3d.fillText(r.name, cp.x, cp.y);
+      ctx3d.restore();
+    }
+
+
+    // --- devices overlay (3D) ---
+    const tDev = performance.now() * 0.001;
+    for(const obj of DEVICE_OBJECTS){
+      obj.draw3D(ctx3d, w, h, tDev);
+    }
+
+    document.getElementById("msText").textContent = (performance.now() - t0).toFixed(1);
+  }
+
+  function map2D(){
+    const w = c2d.clientWidth, h = c2d.clientHeight;
+    const pad = 18;
+    const s = Math.min((w-2*pad)/BOUNDS.w, (h-2*pad)/BOUNDS.d);
+    const ox = pad + (w-2*pad - BOUNDS.w*s)/2 - BOUNDS.minX*s;
+    const oy = pad + (h-2*pad - BOUNDS.d*s)/2 - BOUNDS.minZ*s;
+    return { s, ox, oy, w, h };
+  }
+  function clear2D(){
+    const w = c2d.clientWidth, h = c2d.clientHeight;
+    ctx2d.clearRect(0,0,w,h);
+    const g = ctx2d.createRadialGradient(w*0.45,h*0.28,20, w*0.5,h*0.55, Math.max(w,h));
+    g.addColorStop(0, "rgba(34,230,255,.10)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx2d.fillStyle = g;
+    ctx2d.fillRect(0,0,w,h);
+  }
+  function draw2D(){
+    const m = map2D();
+
+
+    clear2D();
+    for(const r of ROOM_META){
+      const isSel = r.id === selectedRoomId;
+      const isOutdoor = r.kind === "outdoor";
+      const col = isSel
+        ? "rgba(255,58,215,.95)"
+        : (isOutdoor ? "rgba(255,255,255,.55)" : "rgba(34,230,255,.85)");
+
+      const pts = r.poly.map(([x,z]) => ({ x: m.ox + x*m.s, y: m.oy + z*m.s }));
+
+      ctx2d.save();
+      ctx2d.globalCompositeOperation = "lighter";
+      ctx2d.beginPath();
+      ctx2d.moveTo(pts[0].x, pts[0].y);
+      for(let i=1;i<pts.length;i++) ctx2d.lineTo(pts[i].x, pts[i].y);
+      ctx2d.closePath();
+      ctx2d.fillStyle = isSel ? "rgba(255,58,215,.10)" : (isOutdoor ? "rgba(255,255,255,.06)" : "rgba(34,230,255,.06)");
+      ctx2d.fill();
+      ctx2d.restore();
+
+      for(let i=0;i<pts.length;i++){
+        const a = pts[i];
+        const b = pts[(i+1)%pts.length];
+        ctx2d.save();
+        ctx2d.globalCompositeOperation = "lighter";
+        ctx2d.globalAlpha = isSel ? 1 : 0.85;
+        ctx2d.lineCap="round";
+        ctx2d.lineJoin="round";
+        ctx2d.strokeStyle = col;
+        ctx2d.lineWidth = isSel ? 1.9 : (isOutdoor ? 1.05 : 1.35);
+        ctx2d.shadowColor = col;
+        ctx2d.shadowBlur = isSel ? 14 : 12;
+        ctx2d.beginPath();
+        ctx2d.moveTo(a.x,a.y);
+        ctx2d.lineTo(b.x,b.y);
+        ctx2d.stroke();
+        ctx2d.restore();
+      }
+
+      const cx = pts.reduce((s,p)=>s+p.x,0)/pts.length;
+      const cy = pts.reduce((s,p)=>s+p.y,0)/pts.length;
+      ctx2d.save();
+      ctx2d.globalCompositeOperation="lighter";
+      ctx2d.font = isSel ? "700 13px system-ui" : (isOutdoor ? "600 11px system-ui" : "600 12px system-ui");
+      ctx2d.textAlign="center";
+      ctx2d.textBaseline="middle";
+      ctx2d.fillStyle = isSel ? "rgba(255,255,255,.92)" : (isOutdoor ? "rgba(255,255,255,.70)" : "rgba(34,230,255,.78)");
+      ctx2d.shadowColor = isSel ? "rgba(255,58,215,.22)" : "rgba(34,230,255,.18)";
+      ctx2d.shadowBlur = isSel ? 12 : 9;
+      ctx2d.fillText(r.name, cx, cy);
+      ctx2d.restore();
+    }
+    // --- devices overlay (2D) ---
+    const tDev2 = performance.now() * 0.001;
+    for(const obj of DEVICE_OBJECTS){
+      obj.draw2D(ctx2d, m, tDev2);
+    }
+
+
+  }
+
+  c2d.addEventListener("click", (e)=>{
+    const rect = c2d.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    
+    const m = map2D();
+
+    // ---- pick device (CanvasDevice objects) ----
+    let bestObj2 = null;
+    let bestD22 = 14*14;
+    for(const obj of DEVICE_OBJECTS){
+      const hit = obj.hitTest2D(mx, my, m);
+      if(hit.hit && hit.d2 < bestD22){
+        bestD22 = hit.d2;
+        bestObj2 = obj;
+      }
+    }
+    if(bestObj2){
+      const d = bestObj2.d;
+      const wasSame = (selectedDeviceId === d.id);
+      setSelectedDevice(d);
+      if(wasSame){
+        toggleDevice(d);
+        refreshSelectionUI();
+      }
+      return;
+    }
+
+    const floors = ROOM_META.map(r => ({
+      room:r,
+      pts: r.poly.map(([x,z]) => ({ x: m.ox + x*m.s, y: m.oy + z*m.s }))
+    }));
+
+    let hit=null;
+    for(const f of floors){
+      if(pointInPoly({x:mx,y:my}, f.pts)){ hit=f.room; break; }
+    }
+    setSelectedRoom(hit);
+  });
+
+  function syncAutoUI(){
+    document.getElementById("autoLbl").textContent = cam.autoRotate ? "Auto" : "Manual";
+    const dot = document.getElementById("autoDot");
+    dot.style.background = cam.autoRotate ? "rgba(34,230,255,.95)" : "rgba(255,58,215,.95)";
+    dot.style.boxShadow = cam.autoRotate ? "0 0 14px rgba(34,230,255,.55)" : "0 0 14px rgba(255,58,215,.45)";
+  }
+  document.getElementById("toggleAuto").addEventListener("click", ()=>{
+    cam.autoRotate = !cam.autoRotate;
+    syncAutoUI();
+    decorDirty = true;
+  });
+
+  function tickClock(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    document.getElementById("phoneTime").textContent = `${hh}:${mm}`;
+  }
+  setInterval(tickClock, 10_000);
+  tickClock();
+
+  const ui = {
+    fpsRange: document.getElementById("fpsRange"),
+    fpsText: document.getElementById("fpsText"),
+    qualitySelect: document.getElementById("qualitySelect"),
+  };
+  let targetFPS = Number(ui.fpsRange.value) || 45;
+  ui.fpsText.textContent = String(targetFPS);
+
+  ui.fpsRange.addEventListener("input", ()=>{
+    targetFPS = Number(ui.fpsRange.value);
+    ui.fpsText.textContent = String(targetFPS);
+  });
+  ui.qualitySelect.addEventListener("change", ()=>{
+    const k = ui.qualitySelect.value;
+    q = { ...QUALITY_PRESETS[k] };
+    decorDirty = true;
+    dirty2D = true;
+  });
+
+  let lastFrameTime = 0;
+  let fpsCount = 0;
+  let fpsLastReport = performance.now();
+
+  function loop(t){
+    if(dirty2D){
+      draw2D();
+      dirty2D = false;
+    }
+
+    const minDt = 1000 / targetFPS;
+    if(t - lastFrameTime >= minDt){
+      lastFrameTime = t;
+      draw3D(t);
+
+      fpsCount += 1;
+      if(t - fpsLastReport > 650){
+        const fpsNow = (fpsCount * 1000) / (t - fpsLastReport);
+        ui.fpsText.textContent = String(Math.round(fpsNow));
+        fpsCount = 0;
+        fpsLastReport = t;
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function init(){
+    resizeAll();
+    calibrateMirror();   // ✅ coerenza cucina/sala tra minimappa e 3D
+    syncAutoUI();
+    setSelectedRoom(null);
+    requestAnimationFrame(loop);
+  }
+  init();
+
+})();
+}
+</script>
+</body>
+</html>
