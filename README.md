@@ -9,7 +9,7 @@ It renders a neon/wireframe floorplan in a pseudo‑3D view, paired with a **cli
 
 ## Demo
 
-- Open `index.html` in a browser (Chrome/Edge/Firefox).
+- Open `index.html` in a browser (Chrome/Edge/Firefox) [https://gabrieleangeli.github.io/apartment-3d-synoptic/](https://gabrieleangeli.github.io/apartment-3d-synoptic/).
 - Interact with the 3D view and the minimap (selection is synced).
 
 ---
@@ -20,8 +20,8 @@ It renders a neon/wireframe floorplan in a pseudo‑3D view, paired with a **cli
 - **2D minimap** (phone‑style UI) with room labels + click‑to‑select
 - **3D room picking** (click rooms in the 3D view to select/highlight)
 - “CAD‑like” controls:
-  - **Left‑drag**: rotate (yaw + pitch)
-  - **Right‑drag**: rotate **only horizontally** (yaw around Y axis)
+  - **Right‑drag**: rotate (yaw + pitch)
+  - **Left‑drag**: rotate **only horizontally** (yaw around Y axis)
   - **Shift + drag**: pan
   - **Mouse wheel**: zoom
   - **R**: toggle auto‑rotate

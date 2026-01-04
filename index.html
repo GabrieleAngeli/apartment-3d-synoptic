@@ -360,7 +360,7 @@ if (window.__SYNOPTIC3D_LOADED__) {
   const SCALE_BASE = 70;
 
   const ROOMS = [
-    { id:"poggiolo1", name:"Poggiolo", info:"Balcone cucina", h:0.45, kind:"outdoor",
+    { id:"poggiolo1", name:"Poggiolo", info:"Balcone cucina", h:0.75, kind:"outdoor",
       poly:[[4,0.0],[7.25,0.0],[7.25,0.95],[4,0.95]] },
     { id:"cucina", name:"Cucina", info:"Cottura / pranzo",
       poly:[[4,1],[7.25,1],[7.25,5.30],[4,5.30]] },
@@ -374,7 +374,7 @@ if (window.__SYNOPTIC3D_LOADED__) {
       poly:[[5.65,8.10],[6.85,8.10],[6.85,11.10],[5.65,11.10]] },
     { id:"stanza_dx", name:"Stanza", info:"Camera / studio",
       poly:[[6.90,6.60],[8.40,6.60],[8.40,5.35],[11.25,5.35],[11.25,8.90],[6.90,8.90]] },
-    { id:"poggiolo2", name:"Poggiolo", info:"Balcone lato destro", h:0.45, kind:"outdoor",
+    { id:"poggiolo2", name:"Poggiolo", info:"Balcone lato destro", h:0.75, kind:"outdoor",
      poly:[[11.30,5.35],[12.30,5.35],[12.30,8.90],[11.30,8.90]] },
     { id:"stanza_cx", name:"Stanza", info:"Camera 2",
       poly:[[2.40,8.10],[5.60,8.10],[5.60,11.10],[5.20,11.10],[5.20,13.35],[2.40,13.35]] },
@@ -393,16 +393,28 @@ if (window.__SYNOPTIC3D_LOADED__) {
   // - pos: [x, z] nello stesso sistema della planimetria (stessa scala di ROOMS)
   // - roomId: id stanza (vedi ROOMS)
   //
-  const DEVICES = [
-    { id:"t_sala",          type:"thermostat", name:"Termostato sala",  roomId:"sala",        pos:[8.40,5.30],  y:1.40, temp:21.4, setpoint:22.0 },
-    { id:"l_cucina",        type:"light",      name:"Luce cucina",      roomId:"cucina",      pos:[5.70, 2.10], y:2.40, on:true },
-    { id:"l_sala",          type:"light",      name:"Luce sala",        roomId:"sala",        pos:[9.70, 2.10], y:2.40, on:false },
-    { id:"l_bagno",         type:"light",      name:"Luce bagno",       roomId:"bagno",       pos:[6.25,12.70], y:2.40, on:false },
-    { id:"d_ingresso",      type:"door",       name:"Porta ingresso",   roomId:"atrio",       pos:[3.95, 6.50], y:2.40, open:false, locked:true},
+  // const DEVICES = [
+  //   { id:"t_sala", type:"thermostat", name:"Termostato sala", roomId:"sala", pos:[8.40,5.30], y:1.40, temp:21.4, setpoint:22.0 },
+  //   { id:"l_cucina",  type:"light",      name:"Luce cucina",      roomId:"cucina", pos:[6.80, 2.10], y:2.40, on:true },
+  //   { id:"l_sala",    type:"light",      name:"Luce sala",        roomId:"sala",   pos:[9.60, 2.60], y:2.40, on:false },
+  //   { id:"l_bagno",   type:"light",      name:"Luce bagno",       roomId:"bagno",  pos:[6.25,12.70], y:2.40, on:false },
+  //   { id:"d_ingresso",type:"door",       name:"Porta ingresso",   roomId:"atrio",  pos:[4.05, 6.00], y:2.40, open:false, locked:true },
+  //   { id:"d_bagno",   type:"door",       name:"Porta bagno",      roomId:"bagno",  pos:[5.65,11.15], y:2.40, open:false, locked:false },
+  // ];
+
+   const DEVICES = [
+    { id:"t_sala",          type:"thermostat", name:"Termostato sala",  roomId:"sala",        pos:[8.60,5.40],  y:1.40, temp:21.4, setpoint:22.0 },
+    { id:"l_cucina",        type:"light",      name:"Luce cucina",      roomId:"cucina",      pos:[5.70, 2.70], y:2.10, on:true, rotationDeg: 180 },
+    { id:"l_sala",          type:"light",      name:"Luce sala",        roomId:"sala",        pos:[9.70, 2.10], y:2.10, on:false, rotationDeg: 180  },
+    { id:"l_bagno",         type:"light",      name:"Luce bagno",       roomId:"bagno",       pos:[6.25,12.70], y:2.10, on:false, rotationDeg: 180  },
+    { id:"d_ingresso",      type:"door",       name:"Porta ingresso",   roomId:"atrio",       pos:[3.95, 5.60], y:2.40, open:false, locked:true, hinge:"right", swing:"in", openAngleDeg: 90},
     { id:"d_bagno",         type:"door",       name:"Porta bagno",      roomId:"bagno",       pos:[5.80,11.10], y:2.40, open:false, locked:false },
-    { id:"d_stanza_dx_b",   type:"door",       name:"Porta stanza dx",  roomId:"stanza_dx_b", pos:[6.90,10.90], y:2.40, open:false, locked:false },
-    { id:"d_stanza_cx",   type:"door",       name:"Porta stanza cx",  roomId:"stanza_cx",     pos:[5.60,9.95],  y:2.40, open:false, locked:false },
-    //{ id:"d_stanza_dx_b",   type:"door", name:"Porta stanza dx", roomId:"stanza_dx_b",  pos:[8.80,11.10], y:2.40, open:false, locked:true },
+    { id:"d_stanza_dx_b",   type:"door",       name:"Porta stanza dx",  roomId:"stanza_dx_b", pos:[6.90,9.90], y:2.40, open:false, locked:false , hinge:"right", swing:"in", openAngleDeg: 90},
+    { id:"d_stanza_cx",     type:"door",       name:"Porta stanza cx",  roomId:"stanza_cx",   pos:[5.60,9.95],  y:2.40, open:false, locked:false , hinge:"left", swing:"in", openAngleDeg: 90},
+    { id:"d_stanza_dx",     type:"door",       name:"Porta stanza dx",  roomId:"stanza_dx",   pos:[6.90,6.90],  y:2.40, open:false, locked:false , hinge:"right", swing:"in", openAngleDeg: 90},
+    { id:"d_stanza_sx",     type:"door",       name:"Porta stanza sx",  roomId:"stanza_sx",   pos:[3.95,7.00],  y:2.40, open:false, locked:false , hinge:"left", swing:"in", openAngleDeg: 90},
+    { id:"d_cucina",        type:"door",       name:"Porta cucina",     roomId:"cucina",      pos:[7.0,5.30], y:2.40, open:false, locked:false },
+    { id:"d_sala",          type:"door",       name:"Porta sala",       roomId:"sala",        pos:[7.4,5.30], y:2.40, open:false, locked:false,  hinge:"right", swing:"in", openAngleDeg: 90 },
   ];
 
   // --- Canvas Objects: Device --------------------------------------------------
@@ -648,7 +660,12 @@ if (window.__SYNOPTIC3D_LOADED__) {
         ctx.stroke();
       }
 
-      this._drawBulb(ctx, p.x, p.y, scale, col);
+      const rot = ((typeof d.rotationDeg === "number") ? d.rotationDeg : 0) * Math.PI/180;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(rot);
+      this._drawBulb(ctx, 0, 0, scale, col);
+      ctx.restore();
 
       if(isSel){
         ctx.font = "700 12px system-ui";
@@ -761,10 +778,31 @@ if (window.__SYNOPTIC3D_LOADED__) {
 
   // --- Canvas Object: Door (render "3D") ---------------------------------------
   // Porta come pannello 3D (wireframe) con apertura (rotazione su cerniera).
+  
+  // --- Canvas Object: Door (render "3D") ---------------------------------------
+  // Porta come pannello 3D (wireframe) con:
+  //  - cerniera a sinistra o destra (d.hinge: "left" | "right")
+  //  - apertura interna o esterna (d.swing: "in" | "out" | "interna" | "esterna")
+  //
+  // Note:
+  // - d.pos è SEMPRE il punto cerniera (hinge point).
+  // - L'orientamento del "muro" viene inferito dal segmento più vicino del poligono stanza (room.poly),
+  //   oppure forzato con d.wallAngleDeg.
   class CanvasDoor3D extends CanvasDevice {
     constructor(data){
       super(data);
-      this._cached = { roomId:null, angle:0 };
+      this._cached = { roomId:null, wallAng:0, interiorIsLeft:true, ax:0,az:0,bx:1,bz:0 };
+    }
+
+    _polyIsCCW(poly){
+      // area signed (x,z) - CCW => area>0
+      let a = 0;
+      for(let i=0;i<poly.length;i++){
+        const [x1,z1] = poly[i];
+        const [x2,z2] = poly[(i+1)%poly.length];
+        a += (x1*z2 - x2*z1);
+      }
+      return a > 0;
     }
 
     _distPointSegSq(px,pz, ax,az, bx,bz){
@@ -780,14 +818,47 @@ if (window.__SYNOPTIC3D_LOADED__) {
       return dx*dx + dz*dz;
     }
 
-    _closestWallAngle(){
+    _normalizeSwing(){
       const d = this.d;
-      if(typeof d.wallAngleDeg === "number") return (d.wallAngleDeg * Math.PI/180);
+      let s = (d.swing ?? "in");
+      if(typeof s !== "string") s = "in";
+      s = s.toLowerCase().trim();
+      if(s.startsWith("out") || s.startsWith("ext") || s === "esterna" || s === "esterno" || s === "outside"){
+        return "out";
+      }
+      return "in";
+    }
 
+    _wallInfo(){
+      const d = this.d;
       const room = getRoomById(d.roomId);
-      if(!room || !room.poly || room.poly.length < 2) return 0;
 
-      if(this._cached.roomId === room.id) return this._cached.angle;
+      // Manual override
+      if(typeof d.wallAngleDeg === "number"){
+        const wallAng = (d.wallAngleDeg * Math.PI / 180);
+
+        // interior side hint (optional)
+        let interiorIsLeft = true;
+        if(room && room.poly && room.poly.length >= 3){
+          // assumption: if poly is CCW, interior is "left" of edges in polygon order
+          interiorIsLeft = this._polyIsCCW(room.poly);
+        }
+        if(d.interiorSide === "right" || d.interiorIsLeft === false) interiorIsLeft = false;
+        if(d.interiorSide === "left"  || d.interiorIsLeft === true) interiorIsLeft = true;
+
+        return { roomId: room ? room.id : null, wallAng, interiorIsLeft, ax:0,az:0,bx:1,bz:0 };
+      }
+
+      if(!room || !room.poly || room.poly.length < 2){
+        return { roomId: null, wallAng: 0, interiorIsLeft:true, ax:0,az:0,bx:1,bz:0 };
+      }
+
+      if(this._cached.roomId === room.id){
+        return this._cached;
+      }
+
+      const ccw = this._polyIsCCW(room.poly);
+      const interiorIsLeft = ccw; // for edges in polygon order: CCW => interior on left
 
       const px = d.pos[0], pz = d.pos[1];
       let best = { d2: Infinity, ax:0, az:0, bx:1, bz:0 };
@@ -798,26 +869,53 @@ if (window.__SYNOPTIC3D_LOADED__) {
         const d2 = this._distPointSegSq(px,pz, ax,az, bx,bz);
         if(d2 < best.d2) best = { d2, ax,az, bx,bz };
       }
-      const ang = Math.atan2(best.bz-best.az, best.bx-best.ax);
-      this._cached = { roomId: room.id, angle: ang };
-      return ang;
+
+      const wallAng = Math.atan2(best.bz-best.az, best.bx-best.ax);
+      this._cached = { roomId: room.id, wallAng, interiorIsLeft, ax:best.ax,az:best.az,bx:best.bx,bz:best.bz };
+      return this._cached;
+    }
+
+    _doorPlan(){
+      const d = this.d;
+      const w = (typeof d.width === "number") ? d.width : 0.90;
+      const openA = ((typeof d.openAngleDeg === "number") ? d.openAngleDeg : 90) * Math.PI/180;
+
+      const hinge = (d.hinge === "right") ? "right" : "left";
+      const hingeFlip = (hinge === "right"); // reverse direction along wall so leaf extends opposite side
+
+      const info = this._wallInfo();
+
+      // closed leaf direction (along wall, possibly reversed to support hinge side)
+      const baseAng = info.wallAng + (hingeFlip ? Math.PI : 0);
+
+      // interior side relative to leaf direction:
+      // reversing direction flips left/right.
+      const interiorLeftForLeaf = hingeFlip ? !info.interiorIsLeft : info.interiorIsLeft;
+
+      const swing = this._normalizeSwing(); // "in" | "out"
+      const targetIsLeft = (swing === "in") ? interiorLeftForLeaf : !interiorLeftForLeaf;
+
+      // +openA rotates towards left of base direction; -openA towards right
+      const openSign = targetIsLeft ? +1 : -1;
+
+      const ang = baseAng + (d.open ? openSign * openA : 0);
+
+      return { w, baseAng, ang, openA, openSign, interiorLeftForLeaf, swing };
     }
 
     _doorGeom(){
       const d = this.d;
-      const w = (typeof d.width === "number") ? d.width : 0.90;
       const h = (typeof d.height === "number") ? d.height : 2.10;
       const th = (typeof d.thickness === "number") ? d.thickness : 0.06;
 
-      const hingeSign = (d.hinge === "right") ? -1 : +1;
-      const openA = ((typeof d.openAngleDeg === "number") ? d.openAngleDeg : 90) * Math.PI/180;
-
-      const wallAng = this._closestWallAngle();
-      const ang = wallAng + (d.open ? hingeSign * openA : 0);
+      const plan = this._doorPlan();
+      const ang = plan.ang;
+      const w = plan.w;
 
       const dx = Math.cos(ang) * w;
       const dz = Math.sin(ang) * w;
 
+      // thickness direction (normal)
       const nx = -Math.sin(ang) * th;
       const nz =  Math.cos(ang) * th;
 
@@ -835,7 +933,7 @@ if (window.__SYNOPTIC3D_LOADED__) {
       const q2 = [p2[0]+nx, p2[1], p2[2]+nz];
       const q3 = [p3[0]+nx, p3[1], p3[2]+nz];
 
-      return { p:[p0,p1,p2,p3], q:[q0,q1,q2,q3] };
+      return { p:[p0,p1,p2,p3], q:[q0,q1,q2,q3], plan };
     }
 
     hitTest3D(mx, my, w, h){
@@ -902,6 +1000,7 @@ if (window.__SYNOPTIC3D_LOADED__) {
       }
       ctx.globalAlpha = 1;
 
+      // lock icon
       if(d.locked){
         const cx = (A[0].x + A[3].x)/2;
         const cy = (A[0].y + A[3].y)/2;
@@ -920,26 +1019,26 @@ if (window.__SYNOPTIC3D_LOADED__) {
         ctx.textAlign="center";
         ctx.textBaseline="middle";
         ctx.fillText(d.name, cx, cy - 18);
+
+        // debug hint (opzionale): hinge + swing
+        // ctx.font = "10px system-ui";
+        // ctx.fillText(`${(d.hinge||"left")} / ${(d.swing||"in")}`, cx, cy - 4);
       }
 
       ctx.restore();
     }
 
     draw2D(ctx, m, t=0){
-      // simbolo porta su minimappa: linea su muro + arco apertura se open
+      // simbolo porta su minimappa: linea + arco di apertura (in/out)
       const d = this.d;
       const isSel = this.isSelected();
       const col = isSel ? "rgba(255,58,215,.95)" : this.color();
 
+      const plan = this._doorPlan();
+      const r = plan.w * 0.6 * m.s;
+
       const x = m.ox + d.pos[0]*m.s;
       const y = m.oy + d.pos[1]*m.s;
-
-      const wallAng = this._closestWallAngle();
-      const wDoor = (((typeof d.width === "number") ? d.width : 0.90) * m.s);
-
-      const ux = Math.cos(wallAng), uz = Math.sin(wallAng);
-      const x1 = x + ux * (wDoor*0.6);
-      const y1 = y + uz * (wDoor*0.6);
 
       ctx.save();
       ctx.globalCompositeOperation="lighter";
@@ -948,16 +1047,20 @@ if (window.__SYNOPTIC3D_LOADED__) {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
+
       if(d.open){
-        const hinge = (d.hinge === "right") ? -1 : +1;
-        const a0 = wallAng;
-        const a1 = wallAng + hinge * (Math.PI/2);
-        ctx.arc(x, y, wDoor*0.6, -a0, -a1, hinge < 0);
+        const a0 = plan.baseAng;
+        const a1 = plan.baseAng + plan.openSign * plan.openA;
+        // Canvas arc usa angoli in senso orario su y verso il basso: invertiamo segni
+        ctx.arc(x, y, r, a0, a1, plan.openSign < 0);
       } else {
+        const x1 = x + Math.cos(plan.baseAng) * r;
+        const y1 = y + Math.sin(plan.baseAng) * r;
         ctx.lineTo(x1, y1);
       }
       ctx.stroke();
 
+      // hinge dot
       ctx.fillStyle = "rgba(255,255,255,.85)";
       ctx.beginPath();
       ctx.arc(x, y, 2.4, 0, Math.PI*2);
@@ -966,6 +1069,7 @@ if (window.__SYNOPTIC3D_LOADED__) {
       ctx.restore();
     }
   }
+
 
   // --- Device registry / factory ------------------------------------------------
   // Aggiungi un tipo custom:
